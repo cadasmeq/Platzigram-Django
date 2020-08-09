@@ -1,0 +1,43 @@
+# django notes
+install: pip3 install  django
+
+# Initing Project
+django-admin: es una interfaz de django.
+$ django-admin startproject Platzigram		-> creación de projecto
+
+# Project Scheme
+<Platzigram>
+0. manage.py		: permite ejecutar todos los comandos definidos e instalado en la aplicación del proyecto. (Entre ellas las del comando django-admin)
+	1. __init__.py	: Iniciador de modulo de Python.
+	2. asgi.py	: Sucesor espiritual de WSGI, para deployment Asincrono.
+	3. settings.py	: Define todas las configuraciones del proyecto.
+	4. url.py	: Punto de entrada para todas las peticiones que lleguen al  proyecto.
+	5. wsgi.py	: Es utilizado para el deployment.
+
+# Files detail
+1. Settings.py
+BASE_DIR		: Define la ubicación donde se está corriendo el proyecto.
+SECRET_KEY		: Usado para el hashing de contraseñas y sesiones.
+DEBUG			: Define si el proyecto esta en desarrollo.
+ALLOWED_HOSTS		: Define que hosts estan permitidos para interactuar con el proyecto.
+INSTALLED_APPS		: Aplicaciones ligadas al proyecto.
+MIDDLEWARE		: Controles de seguridad utilizados en django.
+ROOT_URLCONF		: Ubicación de las URLs.
+TEMPLATES		: Ubicación de los templates.
+WSGI_APPLICATION	: Ubicación principal del deployment.
+DATABASES		: Configuración y conexión a BD.
+AUTH_PASSWORD_VALIDATORS: Validadores de contraseñas. 
+
+# Executing Project
+$ python3 manage.py	-> Abre menú de opciones posibles para utilzar con django.
+$ python3 manage.py runserver	-> inicia el server.
+
+# Defining urls.
+1. urls.py
+
+- path("/hello", vista)		-> path() carga la url más la vista indicada.
+- vista = function(request)	-> la vista es una función que recibe un request del cliente.
+- function(request): 
+	return HttpResponse(respuesta)	-> La respuesta puede es lo que se visualizará finalmente en la vista.
+
+
