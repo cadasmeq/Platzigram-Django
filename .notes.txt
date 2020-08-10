@@ -123,3 +123,24 @@ $ python3 manage.py startapp posts
   from posts import views as posts_views
   
   path('posts', post_views.list_post)
+
+# Template System
+1. Template System of django, works similar to Jinja2.
+2. Must be specified: 
+	- request
+	- template's name
+	- context (dict)
+3. By default, django's template system work for each app in /templates folder. (You can check this config in settings.py)
+
+$ mkdir /Platzigram/posts/templates
+$ touch 'feed.html'
+
+posts/views.py
+from django.shortcuts import render
+
+def <x_view>(request):
+	posts = POSTS()
+	return render(request, 'feed.html', {'posts':posts})
+
+in template you can use {{ var }} or {% for %} blocks similar to flask.
+

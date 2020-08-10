@@ -1,38 +1,38 @@
 # django
-from django.http import HttpResponse
-import time
+from django.shortcuts import render
 from datetime import datetime
 
 posts = [
-    {
-        'user':'Cristopher Adasme',
+    {   
         'title': 'My dear Fenrir',
+        'user':{
+            'name':'@cadasmeq',
+            'picture':'https://picsum.photos/60/60/?image=1009',
+        },
         'timestamp': datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S'),
-        'picture': 'https://picsum.photos/200/200/?image=237',
+        'photo': 'https://picsum.photos/200/200/?image=237',
     },
-    {
-        'user':'@MyQueen',
-        'title': 'SoRomantinc~',
+
+    {   'title': 'SoRomantinc~',
+        'user':{
+            'name':'@MyQueen',
+            'picture':'https://picsum.photos/60/60/?image=1005',
+        },
         'timestamp': datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S'),
-        'picture': 'https://picsum.photos/200/200/?image=1004',
+        'photo': 'https://picsum.photos/200/200/?image=1004',
     },
-    {
-        'user':'@TwistedMind',
-        'title': 'Awww deer<3',
+
+    {   'title': 'Awww deer<3',
+        'user':{
+            'name':'@TwistedMind',
+            'picture':'https://picsum.photos/60/60/?image=1011', 
+        },
         'timestamp': datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S'),
-        'picture': 'https://picsum.photos/200/200/?image=1003',
+        'photo': 'https://picsum.photos/200/200/?image=237',
     }
 ]
 
 # Create your views here.
 def list_posts(request):
-    content = []
-    for post in posts:
-        content.append("""
-        <p><strong>{title}</strong></p>
-        <p><small>{user}</small></p>
-        <p><i>{timestamp}</i></p>
-        <figure><img src="{picture}" /></figure><br>
-        """.format(**post))
         
-    return HttpResponse(content) 
+    return render(request, 'feed.html', {"posts":posts}) 
