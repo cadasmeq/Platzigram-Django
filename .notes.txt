@@ -40,4 +40,86 @@ $ python3 manage.py runserver	-> inicia el server.
 - function(request): 
 	return HttpResponse(respuesta)	-> La respuesta puede es lo que se visualizará finalmente en la vista.
 
+# Debugging Code
+import pdb; pdb.set_trace()
+dir(var)
+var.methods
+.. etc.
 
+# Passing Params through the URL
+1.- localhost:8000/<path>?numbers="1,3,6,8,9"
+
+Directly from the url, I passed the arg <numbers>, to catch it, you must to do it in this way:
+
+def <path_view>(request):
+	catched_arg = request.GET['<ARG>']
+	return HttpResponse(catched_arg)
+
+# Sending Response as Json Content Type:
+1. After catching from request our arg. You have to dump data into json format (a dict).
+   You can do it manually:
+  
+   from django.http import JsonResponse
+   def <path_view>(request):
+	catched_arg = request.GET{'<ARG>']
+	data = {
+		'status':'ok',
+		'arg':catched_arg,
+	}
+	return JsonResponse(data)
+
+2. Second way is similar of the first one, only you have to dump the data using the json function and setting the content type as json.
+  
+   from django.http import HttpResponse
+   import json
+    def <view>(request):
+	catched = request.GET['<ARG>']
+	return HttpResponse(json.dumps({'data':catched}), content_type="application/json")
+	
+    # json.dumbs()  : Convert our data into a json format.
+    # content_type(): Set content type header from response as json.
+
+3. Correctly way to do it:
+   
+    def <view>(request):
+	catched = request.GET['<ARG>']
+	data = {
+	   'status':'ok',
+	   'data':catched,
+	   'msg': 'data catched successfuly',
+	}
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+# Path Converters
+1. Path converters is the way how django capture info and convert it into a specific data type.
+	i.e:
+	path('example/<str:user>/<int:age>', views.example)
+
+defining example view.
+	def example(request, user, age):
+		if  age > 18:
+			msg = "above 18"
+		else
+			msg = "under"
+		return HttpsResponse(msg)
+
+# Creating an App.
+1. Create an App in django means create a new python module that will provide us a set of new functionalities related between themself.
+2. An app is a combination of models, views, urls, static files.
+
+to create a new app:
+$ python3 manage.py startapp posts
+
+3. After create a new app, you must add it into settings.py on installed apps.
+   'posts',
+
+4. Using view.py of our app, you can create all views related.
+   def list_post(request):
+	list_posts = ListPosts()
+	return HttpResponse(list_posts)
+
+5. And finally, in our urls.py you can import this view and show it using path.
+
+  from posts import views as posts_views
+  
+  path('posts', post_views.list_post)
