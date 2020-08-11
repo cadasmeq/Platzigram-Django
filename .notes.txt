@@ -144,3 +144,56 @@ def <x_view>(request):
 
 in template you can use {{ var }} or {% for %} blocks similar to flask.
 
+# Patrones de diseño
+- Patron de diseño : Solución reutilizable a un problema común.
+- Para el desarrollo web, es mayormente utilizado el patron de diseño MVC (Model View Controller).
+
+1. MVC
+- Controller	: Views + URL's
+- Templates	: Views
+- Modelo	: Define la estructura de los datos, acceso y validación.
+
+2. Django implementa una solución similar, llamada Model Template View (MTV):
+- Modelo	: Define estructura de los datos.
+- Template	: Logica de la presentacion de los datos
+- Views		: El encargado de decididir que template va a presentar lo sdatos y se encarga de pasarle esos datos al template.
+
+# M en MTV
+Configuración de BD en settings.py
+
+DATABASES = {
+	Engine	: Especifica la BD a utilizar.
+}
+
+1. Migraciones
+Cambios existentes en la Base de Datos que no se han reflejado.
+$ python3 manage.py migrate	: Ejecuta cambios de migraciones a la BD.
+
+[note] : DB Browser para sqllite.
+
+ORM (Object Relation Mapping)	: Es una técnica para trabajar con datos a través de multiples sistemas usando una abstracción de programación orientada a objetos.
+
+2. Modelos de usuarios.
+Django ya incluye un modelo de usuarios.
+I.E:
+
+models.py
+from django.db import models
+
+class User(models.Model):
+	email = models.EmailField()
+	password = models.CharField(max_len=25)
+	
+	first_name = models.CharField(max_len=25)
+	last_name = models.CharField(max_len=25)
+	
+	bio = models.TextField()
+	
+	birthdate = models.DateField(blank=True, null=True)
+	created = models.DateTimeField(auto_now_add=True)
+	modified = models.DateTimeField(auto_now=True)
+
+[note] :  referencias a los field de una base de datos verlas directamente en la documentación para ver que campos son compitables con la base de datos.
+
+$ python3 manage.py makemigration	: Detecta nuevos cambios y genera archivo de backup
+$ python3 manage.py migrate		: Migra los cambios a la BD.
