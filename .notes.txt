@@ -333,7 +333,7 @@ class Profile(models.Model):
         upload_to="users/picture",
         blank=True,
         null=True
-        )
+    )
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -345,4 +345,45 @@ class Profile(models.Model):
 -settings.py
 INSTALLED_APPS = [ ..., 'users' ]
 
+[nota] La utilización de ImageField requiere instalación de pillow
 
+$ python3 manage.py makemigrations
+$ python3 manage.py migrate
+
+[nota] estos cambios quedarán reflejado en la base de datos pero aun no estan registrados en /admin
+
+users/admin.py
+from users.models import Profile
+
+v1. admin.site.register(Profile)
+v2.
+
+@admin.register(Profile)
+class ProfileAdmin:
+
+	pass
+
+[nota] Hasta este punto, usando el decorador se registra el perfil dentro de una nueva clase que hereda desde admin.
+[nota 2] Es posible visualizar ya el perfil dentro del admin
+
+	list_display = ('user', 'phone_number', 'website')
+
+[nota] Utilizando list_display podrás desplegar una vista del contenido de esas variables en forma de finally
+
+	list_display_links = ('pk', 'user', 'phone_number')
+
+[nota] utilizando list_display_links se puede convertir en hipervinculos los campos especificados
+[nota 2] si se linkea un campo que no esta siendo muestreado, se deberá agregar primero en el list_display
+
+	list_editable = ("phone_number", "website", "picture")
+
+[nota] Con list_editable, puedes convertir los campos especificiados para ser editables desde /admin
+[nota 2] Existirá un error si se intenta editar un campo que esta linkeando, o es uno u otro.
+
+	search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name', 'phone_number' )
+
+[nota] user no es un campo, es una relación, por eso se espiecifica que con __ queremos usar el last_name de user.
+
+	list_filter = ('created', 'modified', 'user__is_active', 'user__is_staff',)
+
+[nota] Para crear filtros en al vista lateral, deben ser especificados los campos utilizando list_filter
