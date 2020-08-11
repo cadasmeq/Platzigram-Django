@@ -270,3 +270,79 @@ for u in platzi_users:
 platzi_users = User.objects.filter(email__endswith='@platzi.com').update(is_admin=True)
 platzi_users 
 
+# Extendiendo Modelo
+
+$ from django.contrib.auth.models import User
+[note] github.com/django/django : info complete of django code
+[note 2] Los usuarios dentro del sistema de autentificación de django utilizan este modelo.
+
+$ p = User.objects.create_user(username="username", password="123")
+$ p
+
+1. Creación de Super usuario
+$ python3 manage.py createsuperuser
+> llenar datos del superuser
+> done.
+
+http://localhost:8000/admin
+si admin no esta creado en las urls:
+
+urls.py
+from django.contrib.auth.models import admin
+
+path('admin/', admin.site.url)
+
+opciones para extender:
+modelo proxy,
+extendiendo base abstracta que django ya implementa.
+
+- definir campos que incluira nuestro perfil de usuario:
+website
+biography
+phone_number
+profile_picture
+
+created
+modified
+
+- crear modelo proxy basado en usuario: Basado en User model, implementará un OneToOneField, que indica que existirá un perfil para un usuario y un usuario para un perfil.
+from django.contrib.auth.models import User
+
+class Employee(model.Models):
+	user = models.OneToOneField(User, on_delete=models.CASCADE)		-> on_delete=	: dependerá de la lógica de negocio.
+	department = models.CharField(max-_lenghth=100)
+
+- crear app dedicada a usuarios
+python3 manage.py startapp users
+
+-apps.py 
+>> verbose_name = 'Users'
+
+-models.py
+class Profile(models.Model):
+    # Profile Model
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    website = models.URLField(
+        max_length=200,
+        blank=True
+    )
+    biography = models.TextField(blank=True)
+    phone_number = models.CharField(max_length=200,)
+    picture = models.ImageField(
+        upload_to="users/picture",
+        blank=True,
+        null=True
+        )
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        """return username"""
+        return self.user.username
+
+-settings.py
+INSTALLED_APPS = [ ..., 'users' ]
+
+
