@@ -163,7 +163,7 @@ Configuración de BD en settings.py
 
 DATABASES = {
 	Engine	: Especifica la BD a utilizar.
-}
+}tes
 
 1. Migraciones
 Cambios existentes en la Base de Datos que no se han reflejado.
@@ -197,3 +197,76 @@ class User(models.Model):
 
 $ python3 manage.py makemigration	: Detecta nuevos cambios y genera archivo de backup
 $ python3 manage.py migrate		: Migra los cambios a la BD.
+
+
+# Utilizando ORM de django
+$ pyton3 manage.py shell		: Abre shell de python con django cargado.
+[note] Documentación de querys
+1. instanciando clase
+2. create
+
+from posts.model import user
+pablo=User.objectes.create(
+	email='hola@gmail.com',
+	password='superseguro',
+	first_name='Pablo',
+	last_name='Aranda',
+)
+
+$ pablo.email
+$ pablo.id
+$ pablo.pk
+
+[note] El campo ID lo generá por defecto.
+
+$ pablo.email = 'pablo@gmail.com'
+$ pablo.save()
+$ pablo.created
+$ pablo.modified
+
+$ arturo = User()
+$ arturo.pk
+> Null
+$ arturo.email='arturo@platzi.cl'
+$ arturo.first_name = 'Arturo'
+$ arturo.last_name = 'Martinez'
+$ arturo.is_admin = True
+$ arturo.password = 'save'
+$ arturo.save()
+> changes saved.
+
+# arturo.delete()
+> deleted.
+
+3. Queries
+traer a un usuario
+$ user = User.objects.get(email='pablo@gmail.com')
+$ user.pk
+$ user.password
+
+$ platzi_users = User.objects.filter(email__endswith='@platzi.com')
+$ platzi_users
+> id
+[note] doble guión bajo es para indicar que es una query especial.
+[note 2] User.objects.filter	: Es utilizado para obtener más de una respuesta.
+[note 3] User.objects.get	: Es utilizado para obtener solo una respuesta.
+[nota 4] Si se crea metodo __str__ a la clase (modelo) User, se puede cambiar el retorno del id.
+I.E:
+
+class User(...):
+	...
+	__str__(self):
+		return self.email
+
+$ users = User.objects.all()
+$ users
+> email (showing email instead id)
+
+4. Update in Queries
+platzi_users = User.objects.filter(email__endswith='@platzi.com'
+for u in platzi_users:
+	print(u.email, ':', u.is_admin)
+
+platzi_users = User.objects.filter(email__endswith='@platzi.com').update(is_admin=True)
+platzi_users 
+
