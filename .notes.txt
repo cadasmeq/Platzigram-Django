@@ -387,3 +387,83 @@ class ProfileAdmin:
 	list_filter = ('created', 'modified', 'user__is_active', 'user__is_staff',)
 
 [nota] Para crear filtros en al vista lateral, deben ser especificados los campos utilizando list_filter
+
+	fieldsets = (
+        ('Profile', {
+            'fields': (('user', 'picture'),)
+        }),
+        ('Extra Info', {
+            'fields': (
+                ('website', 'phone_number'),
+                ('biography')
+            )
+        }),
+        ('Metadata', {
+            'fields': (('created', 'modified'),),
+            }
+        )
+    )
+
+[nota] Fildsets es una forma de agrupoar los campos, se basa en tuplas para dar niveles.
+[nota 2] Existen campos que son no-editables, como created y modified, lo que arrojara un error, el cual puede ser corregido utilizando readonly_fields para setearlos como solo lectura.
+
+	readonly_fields = ("created", "modified")
+	
+# Extender el modelo proxy
+1. Para extender los campos del modelo de usuario a la página de admin, se debe definir una clase InlineModelAdmin utilizando StackedInline.
+
+class ProfileInLine(admin.StackedInline):
+    """Profile in-line admin for users"""
+    model = Profile
+    can_delete = False
+    verbose_name_plural = 'profiles'
+
+
+2.- En el admin de la aplicación, agregar la clase UserAdmin extendiendo desde el usuario base de admin.
+
+class UserAdmin(BaseUserAdmin):
+    """Adds profile admin to base user admin"""
+    inlines = (ProfileInLine,)
+
+
+3. De-registrar y registrar el modelo de usuario nuevamente.
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
+
+[nota] Desregistra User para registrarlo en el nuevo UserAdmin
+
+# Creación de Modelo de Post
+
+
+
+1. Para extender el modelo de usuario proxy se debe desregistrar el modelo de admin antiguo por el nuevo. Eso se 
+1. Para extender el modelo de usuario proxy, se debe utilizar mediante la class admin.StackedInline. 
+debe utilizar para extender modelo de usuario usando proxy: usa stack in line del admin. De registrar el admin antiguo, y registras el nuevo.
+
+        model = Profile 	-> de que modelo es el stacked inline
+        can_delete = False	-> no lo puede eliminar
+        verbose_name_plural = 'profiles' -> nombre en plural cuando se este instalando
+# luego, crear un nuevo admin de user que hereda del base y agrega inlines.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
