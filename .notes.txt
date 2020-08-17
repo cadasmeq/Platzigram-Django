@@ -550,9 +550,25 @@ def signup_view(request):
 
     return render(request, 'users/signup.html')
 
+# Profile editables
+1. Crear path
+2. Crear view
+3. Crear template
+[nota 1] En este caso el form action esta enviando multiples tipos de datos además del post, por lo cual se le debe indicar mediante la etiqueta enctype="multipart/form-data".
 
+    <form action="{% url 'update' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    ...
 
+[nota 2] En la vista se debe utilizar el parametro FILES del request para recebir no solo lo enviado por le post si no también el archivo.
 
+    form = UpdateForm(request.POST, request.FILES)
+
+[nota 3] Forms tiene la opción de guardar los errores producidos durante el envío de los datos por post mediante el metodo errors del propio objeco format.
+
+     {% if form.errors %}
+                    <p class="alert alert-danger">{{ form.errors }}</p>
+    {% endif %}
 
 
 

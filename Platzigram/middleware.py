@@ -11,10 +11,12 @@ class UserInformationMiddleware:
     
     def __call__(self, request):
         if not request.user.is_anonymous:
-            profile = request.user.profile
-            if not profile.biography or not profile.picture:
-                if request.path != reverse('update'):
-                    return redirect('update')
+            if not request.user.is_staff:
+                profile = request.user.profile
+                if not profile.biography or not profile.picture:
+                    if request.path != reverse('update'):
+                        if request.path != reverse('logout'):
+                            return redirect('update')
         
         response = self.get_response(request)
         return response

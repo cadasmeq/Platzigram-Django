@@ -6,13 +6,41 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from users.models import Profile
-
 # errors
 from django.db.utils import IntegrityError
+from .forms import UpdateForm
 
 def update_profile_view(request):
     """Update user profile view"""
-    return render(request, 'users/update_profile.html')
+    
+    profile = request.user.profile
+    if request.method == 'POST':
+
+        form = UpdateForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            data = form.cleaned_data
+     
+            profile.website = data['website']
+            profile.picture = data['picture']
+            profile.biography = data['biography']
+            profile.phone_number = data['phone_number']
+            profile.save()
+            
+    else:
+        form = UpdateForm()    
+
+
+    return render(
+        request,
+        'users/update_profile.html',
+        {
+            "profile": profile,
+            "user": request.user,
+            "form": form,
+
+        }
+    )
 
 def login_view(request):
     """User login view"""

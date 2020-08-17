@@ -12,6 +12,7 @@ from users import views as users_views
 
 urlpatterns = [
 
+    path('/', local_views.root),
     path('admin/', admin.site.urls),
     path('posts', posts_views.list_posts, name='feed'),
     path('account/login', users_views.login_view, name='login'),

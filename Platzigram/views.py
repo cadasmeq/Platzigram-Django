@@ -1,6 +1,11 @@
-from django.http import HttpResponse
+"""Platzigram views"""
 
+# django
+from django.http import HttpResponse
 import json
+
+def root(request):
+    return redirect('feed')
 
 def hello_world(request):
     """Hello World"""
