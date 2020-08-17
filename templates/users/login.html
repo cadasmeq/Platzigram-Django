@@ -10,6 +10,10 @@
     <p class="alert alert-danger">{{ error }}</p>
     {% endif %}
 
+    {% if alert %}
+    <p class="alert alert-success">{{ alert }}</p>
+    {% endif %}
+
     <form action="{% url 'login'%}" method="POST">
         {% csrf_token %}
         <div class="form-group">
