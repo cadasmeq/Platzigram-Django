@@ -17,6 +17,7 @@ urlpatterns = [
     path('account/login', users_views.login_view, name='login'),
     path('account/logout', users_views.logout_view, name='logout'),
     path('account/signup', users_views.signup_view, name='signup'),
+    path('account/me/update_profile', users_views.update_profile_view, name='update'),
 
     path('hello', local_views.hello_world),
     path('hi', local_views.hi),

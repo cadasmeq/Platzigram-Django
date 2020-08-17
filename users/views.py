@@ -1,3 +1,5 @@
+"""User App Views"""
+
 # django
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -7,6 +9,10 @@ from users.models import Profile
 
 # errors
 from django.db.utils import IntegrityError
+
+def update_profile_view(request):
+    """Update user profile view"""
+    return render(request, 'users/update_profile.html')
 
 def login_view(request):
     """User login view"""
@@ -25,6 +31,8 @@ def login_view(request):
     return render(request, "users/login.html")
 
 def signup_view(request):
+    """Signup new user view"""
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['passwd']
@@ -57,5 +65,6 @@ def signup_view(request):
 
 @login_required
 def logout_view(request):
+    """Logout user view"""
     logout(request)
     return redirect('login')
