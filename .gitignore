@@ -6,4 +6,4 @@ __pycache__
 *.jpg
 *.sqlite3
 .gitignore
-
+*initial.py

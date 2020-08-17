@@ -432,22 +432,81 @@ admin.site.register(User, UserAdmin)
 
 [nota] Desregistra User para registrarlo en el nuevo UserAdmin
 
-# Creación de Modelo de Post
+# Agregar media local
 
+urls.py
++ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+# templates y archivos estaticos
+1. Se debe especificar en settings la ruta asociada al static_url:
 
-1. Para extender el modelo de usuario proxy se debe desregistrar el modelo de admin antiguo por el nuevo. Eso se 
-1. Para extender el modelo de usuario proxy, se debe utilizar mediante la class admin.StackedInline. 
-debe utilizar para extender modelo de usuario usando proxy: usa stack in line del admin. De registrar el admin antiguo, y registras el nuevo.
+STATIC_URL = '/static/'
 
-        model = Profile 	-> de que modelo es el stacked inline
-        can_delete = False	-> no lo puede eliminar
-        verbose_name_plural = 'profiles' -> nombre en plural cuando se este instalando
-# luego, crear un nuevo admin de user que hereda del base y agrega inlines.
+2. Al momento de realizar un llamado de un archivo o contenido dentro del folder static, se debe especificar que se llamará desde esta ubicación seguido del path del contenido.
 
+{% static 'css/bootstrap.min.css' %}
 
+# Login de usuarios
+1. Generar url para login de usuarios
+path('account/login', users_views.login_view, name='login'),
 
+[nota] name es una forma de llamar directamente la url asociada a este path.
 
+2. Generar vista en app correspondiente.
+	def login_view(request):
+    """User login view"""
+	return render(request, "users/login.html")
+
+3. Dentro de la vista, generar la condicional asociada en respuesta al posts.
+	def login_view(request):
+    """User login view"""
+    
+    if request.method == 'POST':}
+		"""do something"""
+	return render(request, "users/login.html")
+
+4. Para generar autenticación:
+	def login_view(request):
+    """User login view"""
+    
+		if request.method == 'POST':
+			username = request.POST['username']
+			password = request.POST['password']
+			user = authenticate(request, username=username, password=password)
+
+5. Y si la autenticación es valida (not None), generar login
+
+	from django.contrib.auth import authenticate, login
+
+	def login_view(request):
+    """User login view"""
+    
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('feed')
+        else:
+            error = "Invalid User or Password."
+            return render(request, "users/login.html", {'error':error})
+
+    return render(request, "users/login.html")
+
+[nota 2] Opcionalmente generar mensaje de error y enviarla como parametro dentro del render.
+
+6. Si los datos son correctos, la validación se realizará sin problemas, pero es necesario especificar que vistas requieren tener un login exitoso. Utilizando decorador @login_required sobre la vista se exige un login para acceder.
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def view(request):
+...
+
+7. Adicional a esto, se debe setear el path utilizado para generar un login obligatorio dentro del settings de django
+
+LOGIN_URL = 'login'		-> name del path de login puesto en urls.py
 
 
 

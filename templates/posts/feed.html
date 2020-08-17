@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- CSS only -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <title>Platzigram</title>
-</head>
-<body>
-    <br>
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Posts's Feed</title>
+{% endblock %}
+
+{% block content %}
     <div class="container">
         <div class="row">
             {% for post in posts %}
@@ -26,20 +22,7 @@
             {% endfor %}
         </div>
     </div>
-
-</body>
-</html>
+{% endblock %}
 
 
-<!-- {% for post in posts %}s
-<p> 
-    <figure>
-        <img src="{{ post.user.picture }}"/>
-    </figure>
-    <small>{{ post.user.name }}</small>
-</p>
-<i> <small>{{ post.timestamp }}</small></i>
-<figure>
-    <img src="{{ post.photo }}"/>
-</figure>
-{% endfor %} -->
+

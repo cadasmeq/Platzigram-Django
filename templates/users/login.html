@@ -1,0 +1,21 @@
+{% extends 'users/base.html' %}
+
+{% block head %}
+<title> Login </title>
+{% endblock %}
+
+{% block container %}
+
+{% if error %}
+<p style="color:red"> {{ error }} </p>
+{% endif %}
+
+<div class="form-group">
+    <form action="{% url 'login'%}" method="POST">
+        {% csrf_token %}
+        <input type="text" placeholder = "Username" name="username">
+        <input type="password" placeholder = "Password" name="password">
+        <input type="submit" value="Sign In">
+    </form> 
+</div>
+{% endblock%}
