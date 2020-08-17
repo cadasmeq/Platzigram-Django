@@ -4,6 +4,7 @@ bin
 __pycache__
 *.png
 *.jpg
+*.jpeg
 *.sqlite3
 .gitignore
 *initial.py
