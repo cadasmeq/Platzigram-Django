@@ -570,15 +570,61 @@ def signup_view(request):
                     <p class="alert alert-danger">{{ form.errors }}</p>
     {% endif %}
 
+# Form Class Django
+
+1. Creación de form class
+
+    from django import forms
+
+    class NameForm(forms.Form):
+        your_name = forms.CharField(label='Your name', max_length=100)
+
+[nota] La estructura de la clase formulario debe asemejarse a las caracteristicas especificadas en el modelo.
+
+2.  Vista
+Para manejar la forma se necesita inicializarla en la vista por la URL en la que se busca que este publicada.
+
+    from .forms import NameForm
+
+    def get_name(request):
+        if request.method == 'POST':
+            form = NameForm(request.POST)
+            if form.is_valid():
+                return HttpResponseRedirect('/thanks/')
+
+        # if a GET (or any other method) we'll create a blank form
+        else:
+            form = NameForm()
+
+        return render(request, 'name.html', {'form': form})
 
 
+3. Datos de los campos
+Cualquier data enviado con un formulario, unba vez haya sido validada correctamente habiendo llamado is_valid() y haya retornado True, los datos validados del formulario estarán en diccionario form.cleaned_data. Estos datos se habrán convertido en tipos de Python.
 
+    if form.is_valid():
+    subject = form.cleaned_data['subject']
+    message = form.cleaned_data['message']
 
+4. Rendering manualmente los campos
+Cada campo esta disponible como un atributo del form usando {{ form.name_of_field }}
 
+5. errores
 
+<div class="form-group">
+    <label>Phone number</label>
+    <input
+        class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}"
+        type="text"
+        name="phone_number"
+        placeholder="Phone number"
+        value="{% if form.phone_number.errors %} {{ form.phone_number.value }} {% else %} {{ profile.phone_number }} {% endif %}"
+    />
 
-
-
+<div class="invalid-feedback">
+        {{ form.phone_number.errors }}
+    </div>
+</div>
 
 
 

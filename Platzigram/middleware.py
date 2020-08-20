@@ -14,9 +14,9 @@ class UserInformationMiddleware:
             if not request.user.is_staff:
                 profile = request.user.profile
                 if not profile.biography or not profile.picture:
-                    if request.path != reverse('update'):
-                        if request.path != reverse('logout'):
-                            return redirect('update')
+                    if request.path != reverse('users:update'):
+                        if request.path != reverse('users:logout'):
+                            return redirect('users:update')
         
         response = self.get_response(request)
         return response
