@@ -3,6 +3,7 @@
 # django
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView
 from django.urls import reverse
@@ -15,7 +16,8 @@ from django.contrib.auth.models import User
 # forms
 from users.forms import UpdateForm, SignupForm
 
-class UserDetailView(DetailView):
+
+class UserDetailView(LoginRequiredMixin, DetailView):
     """User detail view."""
     
     template_name = "users/detail.html"
@@ -28,7 +30,7 @@ class UserDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         user = self.get_object()
         context['posts'] = Post.objects.filter(user=user).order_by('-created')
-        
+
         return context
 
 
