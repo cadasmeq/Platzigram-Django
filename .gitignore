@@ -8,4 +8,4 @@ __pycache__
 db.sqlite3
 .gitignore
 *initial.py
-*.notes
+.notes.txt
