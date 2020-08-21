@@ -3,6 +3,7 @@
 # Django
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.views.generic.list import ListView
 
 # Forms
 from posts.forms import PostForm
@@ -11,6 +12,14 @@ from posts.forms import PostForm
 from posts.models import Post
 
 
+class ListPostView(ListView):
+    template_name = 'posts/feed.html'
+    model = Post
+    paginate_by = 1
+    ordering = ('-created')
+    context_object_name = 'posts'
+
+    
 @login_required
 def list_posts(request):
     """List existing posts."""

@@ -10,7 +10,7 @@ urlpatterns = [
 
     path(
         route = '', 
-        view = views.list_posts,
+        view = views.ListPostView.as_view(),
         name = 'feed'),
     
     path(
