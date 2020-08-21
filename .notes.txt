@@ -632,3 +632,7 @@ Cada campo esta disponible como un atributo del form usando {{ form.name_of_fiel
 
 
 
+
+# slug
+forma de referirse a un campo 'pk' de tipo texto. ej: username, email, etc.
+
