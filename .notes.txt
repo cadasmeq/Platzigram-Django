@@ -1,0 +1,638 @@
+# django notes
+install: pip3 install  django
+
+# Initing Project
+django-admin: es una interfaz de django.
+$ django-admin startproject Platzigram		-> creación de projecto
+
+# Project Scheme
+<Platzigram>
+0. manage.py		: permite ejecutar todos los comandos definidos e instalado en la aplicación del proyecto. (Entre ellas las del comando django-admin)
+	1. __init__.py	: Iniciador de modulo de Python.
+	2. asgi.py	: Sucesor espiritual de WSGI, para deployment Asincrono.
+	3. settings.py	: Define todas las configuraciones del proyecto.
+	4. url.py	: Punto de entrada para todas las peticiones que lleguen al  proyecto.
+	5. wsgi.py	: Es utilizado para el deployment.
+
+# Files detail
+1. Settings.py
+BASE_DIR		: Define la ubicación donde se está corriendo el proyecto.
+SECRET_KEY		: Usado para el hashing de contraseñas y sesiones.
+DEBUG			: Define si el proyecto esta en desarrollo.
+ALLOWED_HOSTS		: Define que hosts estan permitidos para interactuar con el proyecto.
+INSTALLED_APPS		: Aplicaciones ligadas al proyecto.
+MIDDLEWARE		: Controles de seguridad utilizados en django.
+ROOT_URLCONF		: Ubicación de las URLs.
+TEMPLATES		: Ubicación de los templates.
+WSGI_APPLICATION	: Ubicación principal del deployment.
+DATABASES		: Configuración y conexión a BD.
+AUTH_PASSWORD_VALIDATORS: Validadores de contraseñas. 
+
+# Executing Project
+$ python3 manage.py	-> Abre menú de opciones posibles para utilzar con django.
+$ python3 manage.py runserver	-> inicia el server.
+
+# Defining urls.
+1. urls.py
+
+- path("/hello", vista)		-> path() carga la url más la vista indicada.
+- vista = function(request)	-> la vista es una función que recibe un request del cliente.
+- function(request): 
+	return HttpResponse(respuesta)	-> La respuesta puede es lo que se visualizará finalmente en la vista.
+
+# Debugging Code
+import pdb; pdb.set_trace()
+dir(var)
+var.methods
+.. etc.
+
+# Passing Params through the URL
+1.- localhost:8000/<path>?numbers="1,3,6,8,9"
+
+Directly from the url, I passed the arg <numbers>, to catch it, you must to do it in this way:
+
+def <path_view>(request):
+	catched_arg = request.GET['<ARG>']
+	return HttpResponse(catched_arg)
+
+# Sending Response as Json Content Type:
+1. After catching from request our arg. You have to dump data into json format (a dict).
+   You can do it manually:
+  
+   from django.http import JsonResponse
+   def <path_view>(request):
+	catched_arg = request.GET{'<ARG>']
+	data = {
+		'status':'ok',
+		'arg':catched_arg,
+	}
+	return JsonResponse(data)
+
+2. Second way is similar of the first one, only you have to dump the data using the json function and setting the content type as json.
+  
+   from django.http import HttpResponse
+   import json
+    def <view>(request):
+	catched = request.GET['<ARG>']
+	return HttpResponse(json.dumps({'data':catched}), content_type="application/json")
+	
+    # json.dumbs()  : Convert our data into a json format.
+    # content_type(): Set content type header from response as json.
+
+3. Correctly way to do it:
+   
+    def <view>(request):
+	catched = request.GET['<ARG>']
+	data = {
+	   'status':'ok',
+	   'data':catched,
+	   'msg': 'data catched successfuly',
+	}
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+# Path Converters
+1. Path converters is the way how django capture info and convert it into a specific data type.
+	i.e:
+	path('example/<str:user>/<int:age>', views.example)
+
+defining example view.
+	def example(request, user, age):
+		if  age > 18:
+			msg = "above 18"
+		else
+			msg = "under"
+		return HttpsResponse(msg)
+
+# Creating an App.
+1. Create an App in django means create a new python module that will provide us a set of new functionalities related between themself.
+2. An app is a combination of models, views, urls, static files.
+
+to create a new app:
+$ python3 manage.py startapp posts
+
+3. After create a new app, you must add it into settings.py on installed apps.
+   'posts',
+
+4. Using view.py of our app, you can create all views related.
+   def list_post(request):
+	list_posts = ListPosts()
+	return HttpResponse(list_posts)
+
+5. And finally, in our urls.py you can import this view and show it using path.
+
+  from posts import views as posts_views
+  
+  path('posts', post_views.list_post)
+
+# Template System
+1. Template System of django, works similar to Jinja2.
+2. Must be specified: 
+	- request
+	- template's name
+	- context (dict)
+3. By default, django's template system work for each app in /templates folder. (You can check this config in settings.py)
+
+$ mkdir /Platzigram/posts/templates
+$ touch 'feed.html'
+
+posts/views.py
+from django.shortcuts import render
+
+def <x_view>(request):
+	posts = POSTS()
+	return render(request, 'feed.html', {'posts':posts})
+
+in template you can use {{ var }} or {% for %} blocks similar to flask.
+
+# Patrones de diseño
+- Patron de diseño : Solución reutilizable a un problema común.
+- Para el desarrollo web, es mayormente utilizado el patron de diseño MVC (Model View Controller).
+
+1. MVC
+- Controller	: Views + URL's
+- Templates	: Views
+- Modelo	: Define la estructura de los datos, acceso y validación.
+
+2. Django implementa una solución similar, llamada Model Template View (MTV):
+- Modelo	: Define estructura de los datos.
+- Template	: Logica de la presentacion de los datos
+- Views		: El encargado de decididir que template va a presentar lo sdatos y se encarga de pasarle esos datos al template.
+
+# M en MTV
+Configuración de BD en settings.py
+
+DATABASES = {
+	Engine	: Especifica la BD a utilizar.
+}tes
+
+1. Migraciones
+Cambios existentes en la Base de Datos que no se han reflejado.
+$ python3 manage.py migrate	: Ejecuta cambios de migraciones a la BD.
+
+[note] : DB Browser para sqllite.
+
+ORM (Object Relation Mapping)	: Es una técnica para trabajar con datos a través de multiples sistemas usando una abstracción de programación orientada a objetos.
+
+2. Modelos de usuarios.
+Django ya incluye un modelo de usuarios.
+I.E:
+
+models.py
+from django.db import models
+
+class User(models.Model):
+	email = models.EmailField()
+	password = models.CharField(max_len=25)
+	
+	first_name = models.CharField(max_len=25)
+	last_name = models.CharField(max_len=25)
+	
+	bio = models.TextField()
+	
+	birthdate = models.DateField(blank=True, null=True)
+	created = models.DateTimeField(auto_now_add=True)
+	modified = models.DateTimeField(auto_now=True)
+
+[note] :  referencias a los field de una base de datos verlas directamente en la documentación para ver que campos son compitables con la base de datos.
+
+$ python3 manage.py makemigration	: Detecta nuevos cambios y genera archivo de backup
+$ python3 manage.py migrate		: Migra los cambios a la BD.
+
+
+# Utilizando ORM de django
+$ pyton3 manage.py shell		: Abre shell de python con django cargado.
+[note] Documentación de querys
+1. instanciando clase
+2. create
+
+from posts.model import user
+pablo=User.objectes.create(
+	email='hola@gmail.com',
+	password='superseguro',
+	first_name='Pablo',
+	last_name='Aranda',
+)
+
+$ pablo.email
+$ pablo.id
+$ pablo.pk
+
+[note] El campo ID lo generá por defecto.
+
+$ pablo.email = 'pablo@gmail.com'
+$ pablo.save()
+$ pablo.created
+$ pablo.modified
+
+$ arturo = User()
+$ arturo.pk
+> Null
+$ arturo.email='arturo@platzi.cl'
+$ arturo.first_name = 'Arturo'
+$ arturo.last_name = 'Martinez'
+$ arturo.is_admin = True
+$ arturo.password = 'save'
+$ arturo.save()
+> changes saved.
+
+# arturo.delete()
+> deleted.
+
+3. Queries
+traer a un usuario
+$ user = User.objects.get(email='pablo@gmail.com')
+$ user.pk
+$ user.password
+
+$ platzi_users = User.objects.filter(email__endswith='@platzi.com')
+$ platzi_users
+> id
+[note] doble guión bajo es para indicar que es una query especial.
+[note 2] User.objects.filter	: Es utilizado para obtener más de una respuesta.
+[note 3] User.objects.get	: Es utilizado para obtener solo una respuesta.
+[nota 4] Si se crea metodo __str__ a la clase (modelo) User, se puede cambiar el retorno del id.
+I.E:
+
+class User(...):
+	...
+	__str__(self):
+		return self.email
+
+$ users = User.objects.all()
+$ users
+> email (showing email instead id)
+
+4. Update in Queries
+platzi_users = User.objects.filter(email__endswith='@platzi.com'
+for u in platzi_users:
+	print(u.email, ':', u.is_admin)
+
+platzi_users = User.objects.filter(email__endswith='@platzi.com').update(is_admin=True)
+platzi_users 
+
+# Extendiendo Modelo
+
+$ from django.contrib.auth.models import User
+[note] github.com/django/django : info complete of django code
+[note 2] Los usuarios dentro del sistema de autentificación de django utilizan este modelo.
+
+$ p = User.objects.create_user(username="username", password="123")
+$ p
+
+1. Creación de Super usuario
+$ python3 manage.py createsuperuser
+> llenar datos del superuser
+> done.
+
+http://localhost:8000/admin
+si admin no esta creado en las urls:
+
+urls.py
+from django.contrib.auth.models import admin
+
+path('admin/', admin.site.url)
+
+opciones para extender:
+modelo proxy,
+extendiendo base abstracta que django ya implementa.
+
+- definir campos que incluira nuestro perfil de usuario:
+website
+biography
+phone_number
+profile_picture
+
+created
+modified
+
+- crear modelo proxy basado en usuario: Basado en User model, implementará un OneToOneField, que indica que existirá un perfil para un usuario y un usuario para un perfil.
+from django.contrib.auth.models import User
+
+class Employee(model.Models):
+	user = models.OneToOneField(User, on_delete=models.CASCADE)		-> on_delete=	: dependerá de la lógica de negocio.
+	department = models.CharField(max-_lenghth=100)
+
+- crear app dedicada a usuarios
+python3 manage.py startapp users
+
+-apps.py 
+>> verbose_name = 'Users'
+
+-models.py
+class Profile(models.Model):
+    # Profile Model
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    website = models.URLField(
+        max_length=200,
+        blank=True
+    )
+    biography = models.TextField(blank=True)
+    phone_number = models.CharField(max_length=200,)
+    picture = models.ImageField(
+        upload_to="users/picture",
+        blank=True,
+        null=True
+    )
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        """return username"""
+        return self.user.username
+
+-settings.py
+INSTALLED_APPS = [ ..., 'users' ]
+
+[nota] La utilización de ImageField requiere instalación de pillow
+
+$ python3 manage.py makemigrations
+$ python3 manage.py migrate
+
+[nota] estos cambios quedarán reflejado en la base de datos pero aun no estan registrados en /admin
+
+users/admin.py
+from users.models import Profile
+
+v1. admin.site.register(Profile)
+v2.
+
+@admin.register(Profile)
+class ProfileAdmin:
+
+	pass
+
+[nota] Hasta este punto, usando el decorador se registra el perfil dentro de una nueva clase que hereda desde admin.
+[nota 2] Es posible visualizar ya el perfil dentro del admin
+
+	list_display = ('user', 'phone_number', 'website')
+
+[nota] Utilizando list_display podrás desplegar una vista del contenido de esas variables en forma de finally
+
+	list_display_links = ('pk', 'user', 'phone_number')
+
+[nota] utilizando list_display_links se puede convertir en hipervinculos los campos especificados
+[nota 2] si se linkea un campo que no esta siendo muestreado, se deberá agregar primero en el list_display
+
+	list_editable = ("phone_number", "website", "picture")
+
+[nota] Con list_editable, puedes convertir los campos especificiados para ser editables desde /admin
+[nota 2] Existirá un error si se intenta editar un campo que esta linkeando, o es uno u otro.
+
+	search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name', 'phone_number' )
+
+[nota] user no es un campo, es una relación, por eso se espiecifica que con __ queremos usar el last_name de user.
+
+	list_filter = ('created', 'modified', 'user__is_active', 'user__is_staff',)
+
+[nota] Para crear filtros en al vista lateral, deben ser especificados los campos utilizando list_filter
+
+	fieldsets = (
+        ('Profile', {
+            'fields': (('user', 'picture'),)
+        }),
+        ('Extra Info', {
+            'fields': (
+                ('website', 'phone_number'),
+                ('biography')
+            )
+        }),
+        ('Metadata', {
+            'fields': (('created', 'modified'),),
+            }
+        )
+    )
+
+[nota] Fildsets es una forma de agrupoar los campos, se basa en tuplas para dar niveles.
+[nota 2] Existen campos que son no-editables, como created y modified, lo que arrojara un error, el cual puede ser corregido utilizando readonly_fields para setearlos como solo lectura.
+
+	readonly_fields = ("created", "modified")
+	
+# Extender el modelo proxy
+1. Para extender los campos del modelo de usuario a la página de admin, se debe definir una clase InlineModelAdmin utilizando StackedInline.
+
+class ProfileInLine(admin.StackedInline):
+    """Profile in-line admin for users"""
+    model = Profile
+    can_delete = False
+    verbose_name_plural = 'profiles'
+
+
+2.- En el admin de la aplicación, agregar la clase UserAdmin extendiendo desde el usuario base de admin.
+
+class UserAdmin(BaseUserAdmin):
+    """Adds profile admin to base user admin"""
+    inlines = (ProfileInLine,)
+
+
+3. De-registrar y registrar el modelo de usuario nuevamente.
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
+
+[nota] Desregistra User para registrarlo en el nuevo UserAdmin
+
+# Agregar media local
+
+urls.py
++ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# templates y archivos estaticos
+1. Se debe especificar en settings la ruta asociada al static_url:
+
+STATIC_URL = '/static/'
+
+2. Al momento de realizar un llamado de un archivo o contenido dentro del folder static, se debe especificar que se llamará desde esta ubicación seguido del path del contenido.
+
+{% static 'css/bootstrap.min.css' %}
+
+# Login de usuarios
+1. Generar url para login de usuarios
+path('account/login', users_views.login_view, name='login'),
+
+[nota] name es una forma de llamar directamente la url asociada a este path.
+
+2. Generar vista en app correspondiente.
+	def login_view(request):
+    """User login view"""
+	return render(request, "users/login.html")
+
+3. Dentro de la vista, generar la condicional asociada en respuesta al posts.
+	def login_view(request):
+    """User login view"""
+    
+    if request.method == 'POST':}
+		"""do something"""
+	return render(request, "users/login.html")
+
+4. Para generar autenticación:
+	def login_view(request):
+    """User login view"""
+    
+		if request.method == 'POST':
+			username = request.POST['username']
+			password = request.POST['password']
+			user = authenticate(request, username=username, password=password)
+
+5. Y si la autenticación es valida (not None), generar login
+
+	from django.contrib.auth import authenticate, login
+
+	def login_view(request):
+    """User login view"""
+    
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('feed')
+        else:
+            error = "Invalid User or Password."
+            return render(request, "users/login.html", {'error':error})
+
+    return render(request, "users/login.html")
+
+[nota 2] Opcionalmente generar mensaje de error y enviarla como parametro dentro del render.
+
+6. Si los datos son correctos, la validación se realizará sin problemas, pero es necesario especificar que vistas requieren tener un login exitoso. Utilizando decorador @login_required sobre la vista se exige un login para acceder.
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def view(request):
+...
+
+7. Adicional a esto, se debe setear el path utilizado para generar un login obligatorio dentro del settings de django
+
+LOGIN_URL = 'login'		-> name del path de login puesto en urls.py
+
+# Logout
+1. Definir path y vista en la cual se debe definir el quiebre de sesión de la siguiente manera.
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+# Signup
+1. Definir path y vista para signup.
+2. Crear template con formularios.
+3. Para crear un usuario se debe realizar apartir del modelo de usuario indicado previamente.
+def signup_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['passwd']
+        password_confirm = request.POST['passwd_confirm']
+
+        if password != password_confirm:
+            return render(request, 'users/signup.html', {'error':'Password doesnt match'})
+
+        try:
+            user = User.objects.create_user(username=username, password=password)
+
+        except IntegrityError:
+            return render(request, 'users/signup.html', {'error':'User already exists.'})
+
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        email = request.POST['email']
+
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.save()
+
+        profile = Profile(user=user)
+        profile.save()
+
+        return render(request, 'users/login.html', {'alert':'User created successfuly!'})
+
+    return render(request, 'users/signup.html')
+
+# Profile editables
+1. Crear path
+2. Crear view
+3. Crear template
+[nota 1] En este caso el form action esta enviando multiples tipos de datos además del post, por lo cual se le debe indicar mediante la etiqueta enctype="multipart/form-data".
+
+    <form action="{% url 'update' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    ...
+
+[nota 2] En la vista se debe utilizar el parametro FILES del request para recebir no solo lo enviado por le post si no también el archivo.
+
+    form = UpdateForm(request.POST, request.FILES)
+
+[nota 3] Forms tiene la opción de guardar los errores producidos durante el envío de los datos por post mediante el metodo errors del propio objeco format.
+
+     {% if form.errors %}
+                    <p class="alert alert-danger">{{ form.errors }}</p>
+    {% endif %}
+
+# Form Class Django
+
+1. Creación de form class
+
+    from django import forms
+
+    class NameForm(forms.Form):
+        your_name = forms.CharField(label='Your name', max_length=100)
+
+[nota] La estructura de la clase formulario debe asemejarse a las caracteristicas especificadas en el modelo.
+
+2.  Vista
+Para manejar la forma se necesita inicializarla en la vista por la URL en la que se busca que este publicada.
+
+    from .forms import NameForm
+
+    def get_name(request):
+        if request.method == 'POST':
+            form = NameForm(request.POST)
+            if form.is_valid():
+                return HttpResponseRedirect('/thanks/')
+
+        # if a GET (or any other method) we'll create a blank form
+        else:
+            form = NameForm()
+
+        return render(request, 'name.html', {'form': form})
+
+
+3. Datos de los campos
+Cualquier data enviado con un formulario, unba vez haya sido validada correctamente habiendo llamado is_valid() y haya retornado True, los datos validados del formulario estarán en diccionario form.cleaned_data. Estos datos se habrán convertido en tipos de Python.
+
+    if form.is_valid():
+    subject = form.cleaned_data['subject']
+    message = form.cleaned_data['message']
+
+4. Rendering manualmente los campos
+Cada campo esta disponible como un atributo del form usando {{ form.name_of_field }}
+
+5. errores
+
+<div class="form-group">
+    <label>Phone number</label>
+    <input
+        class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}"
+        type="text"
+        name="phone_number"
+        placeholder="Phone number"
+        value="{% if form.phone_number.errors %} {{ form.phone_number.value }} {% else %} {{ profile.phone_number }} {% endif %}"
+    />
+
+<div class="invalid-feedback">
+        {{ form.phone_number.errors }}
+    </div>
+</div>
+
+
+
+
+
+
+
+
+# slug
+forma de referirse a un campo 'pk' de tipo texto. ej: username, email, etc.
+
