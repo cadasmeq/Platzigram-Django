@@ -6,12 +6,13 @@
 
 {% block container %}
 
-    {% if error %}
-    <p class="alert alert-danger">{{ error }}</p>
+    {% if form.errors %}
+
+        <p class="alert alert-danger">Please enter a correct username and password. Note that both fields may be case-sensitive.</p>
     {% endif %}
 
     {% if alert %}
-    <p class="alert alert-success">{{ alert }}</p>
+        <p class="alert alert-success">{{ alert }}</p>
     {% endif %}
 
     <form action="{% url 'users:login'%}" method="POST">
@@ -28,6 +29,6 @@
 
     </form> 
 
-    <p class="mt-4">Don't have an account yetr? <a href="{% url 'users:signup' %}"> Sign up here!. </a></a></p>
+    <p class="mt-4">Don't have an account yet? <a href="{% url 'users:signup' %}"> Sign up here!. </a></a></p>
 
 {% endblock%}
