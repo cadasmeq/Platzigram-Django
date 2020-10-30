@@ -1,5 +1,4 @@
 # Platzigram Django Application
-
 This repository contains an app which imitates Instagram developed using Django Framework.
 
 # # Starting 🚀 
@@ -15,3 +14,8 @@ All modules are listed in requirements.txt file which you should install before 
 
 # # Final Comentary:
 This content is result of Django course by Platzi which its main focus is study Django as a web framework.
+
+# # Preview:
+<p float="left">
+ <img src="django_preview.gif" height="400" width="500" />
+</p>
