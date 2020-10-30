@@ -12,10 +12,10 @@ All views were simplified to use Class-based views
 All modules are listed in requirements.txt file which you should install before to run main.py.
 
 
-# # Final Comentary:
+# # Final Comentary
 This content is result of Django course by Platzi which its main focus is study Django as a web framework.
 
-# # Preview:
+# # Preview
 <p float="left">
  <img src="django_preview.gif" height="400" width="500" />
 </p>
